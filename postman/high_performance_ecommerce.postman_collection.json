@@ -1,0 +1,244 @@
+{
+  "info": {
+    "name": "High-Performance E-Commerce Backend Engine",
+    "description": "Before/after demos for concurrency safety, transactions, caching, async jobs, batch processing, stress testing, and monitoring.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/"
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Postman Product\",\"sku\":\"POSTMAN-001\",\"price\":\"19.99\",\"stock\":10,\"is_popular\":true}"
+            },
+            "url": "{{baseUrl}}/api/products/"
+          }
+        },
+        {
+          "name": "Popular Products - Before",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/popular/?mode=before"
+          }
+        },
+        {
+          "name": "Popular Products - After",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/products/popular/?mode=after"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Checkout - After",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"customer_name\":\"Demo User\",\"items\":[{\"product_id\":1,\"quantity\":1}],\"simulate_payment_failure\":false}"
+            },
+            "url": "{{baseUrl}}/api/orders/checkout/?mode=after"
+          }
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders/"
+          }
+        },
+        {
+          "name": "Get Order 1",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/orders/1/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Before - Problems",
+      "item": [
+        {
+          "name": "Race Stock - Before",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/race-stock/?mode=before&users=20"
+          }
+        },
+        {
+          "name": "Transaction Integrity - Before",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/transaction-integrity/?mode=before"
+          }
+        },
+        {
+          "name": "Stress Checkout - Before",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/stress-checkout/?mode=before&users=100"
+          }
+        },
+        {
+          "name": "Checkout - Before",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"customer_name\":\"Demo User\",\"items\":[{\"product_id\":1,\"quantity\":1}],\"simulate_payment_failure\":false}"
+            },
+            "url": "{{baseUrl}}/api/orders/checkout/?mode=before"
+          }
+        }
+      ]
+    },
+    {
+      "name": "After - Solutions",
+      "item": [
+        {
+          "name": "Race Stock - After",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/race-stock/?mode=after&users=20"
+          }
+        },
+        {
+          "name": "Transaction Integrity - After",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/transaction-integrity/?mode=after"
+          }
+        },
+        {
+          "name": "Stress Checkout - After",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/stress-checkout/?mode=after&users=100"
+          }
+        },
+        {
+          "name": "Checkout - After",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"customer_name\":\"Demo User\",\"items\":[{\"product_id\":1,\"quantity\":1}],\"simulate_payment_failure\":false}"
+            },
+            "url": "{{baseUrl}}/api/orders/checkout/?mode=after"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comparison",
+      "item": [
+        {
+          "name": "Reset Data",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/reset-data/"
+          }
+        },
+        {
+          "name": "Reset Data With Report Orders",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/reset-data/?seed_orders=true"
+          }
+        },
+        {
+          "name": "Latest Comparison",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/demo/comparison/latest/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "item": [
+        {
+          "name": "Performance Logs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/monitoring/performance-logs/"
+          }
+        },
+        {
+          "name": "Trace Logs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/monitoring/traces/"
+          }
+        },
+        {
+          "name": "Monitoring Summary",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/monitoring/summary/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "List Jobs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/jobs/"
+          }
+        },
+        {
+          "name": "Process Pending Jobs",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/jobs/process-pending/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Daily Sales - Before",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reports/daily-sales/process/?mode=before"
+          }
+        },
+        {
+          "name": "Daily Sales - After",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reports/daily-sales/process/?mode=after"
+          }
+        }
+      ]
+    }
+  ]
+}

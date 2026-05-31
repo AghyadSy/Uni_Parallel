@@ -1,0 +1,19 @@
+2026-05-02 22:32:40,839 INFO [django.utils.autoreload] Watching for file changes with StatReloader
+2026-05-02 22:39:43,958 WARNING [django.request] Method Not Allowed: /api/demo/race-stock/
+2026-05-02 22:39:45,242 WARNING [django.request] Not Found: /favicon.ico
+2026-05-02 22:40:40,547 WARNING [django.request] Method Not Allowed: /api/demo/race-stock/
+2026-05-02 22:41:46,621 WARNING [django.request] Method Not Allowed: /api/demo/race-stock/
+2026-05-02 22:42:15,451 WARNING [django.request] Method Not Allowed: /api/demo/race-stock/
+2026-05-12 09:44:15,594 INFO [django.utils.autoreload] Watching for file changes with StatReloader
+2026-05-12 09:53:47,309 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 09:59:45,379 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 09:59:50,900 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 10:00:33,725 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 10:13:29,787 INFO [django.utils.autoreload] Watching for file changes with StatReloader
+2026-05-12 10:13:54,071 INFO [django.utils.autoreload] Watching for file changes with StatReloader
+2026-05-12 10:14:38,333 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 10:15:42,637 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 10:16:16,083 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 10:16:53,739 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 11:40:29,008 WARNING [django.request] Bad Request: /api/orders/checkout/
+2026-05-12 11:51:26,546 WARNING [django.request] Bad Request: /api/orders/checkout/
