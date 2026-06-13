@@ -35,6 +35,24 @@ class StressCheckoutAPIView(APIView):
         return api_success("Stress checkout scenario completed.", data, request=request)
 
 
+class PessimisticLockDemoAPIView(APIView):
+    @trace_operation("pessimistic_lock_demo")
+    def post(self, request):
+        request_label = request.GET.get("request_label")
+        hold_seconds = request.GET.get("hold_seconds", 5)
+        data = services.pessimistic_lock_demo(request_label=request_label, hold_seconds=hold_seconds)
+        return api_success("Pessimistic lock demo completed.", data, request=request)
+
+
+class PessimisticLockBatchAPIView(APIView):
+    @trace_operation("pessimistic_lock_batch")
+    def post(self, request):
+        total_requests = request.GET.get("requests", 10)
+        hold_seconds = request.GET.get("hold_seconds", 5)
+        data = services.pessimistic_lock_batch(total_requests=total_requests, hold_seconds=hold_seconds)
+        return api_success("Pessimistic lock batch completed.", data, request=request)
+
+
 class LatestComparisonAPIView(APIView):
     def get(self, request):
         data = services.latest_comparison()

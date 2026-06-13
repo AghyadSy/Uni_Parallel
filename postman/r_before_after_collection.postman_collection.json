@@ -1,0 +1,598 @@
+{
+  "info": {
+    "_postman_id": "7fdad4d3-3392-4de8-8d84-8c61c4e71431",
+    "name": "R Requirements Before After",
+    "description": "طلبات Before/After منظمة حسب R1-R7 لاختبار السيناريوهات الرئيسية في المشروع.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "baseNodeUrl",
+      "value": "http://127.0.0.1:8001"
+    },
+    {
+      "key": "loadBalancerUrl",
+      "value": "http://127.0.0.1:9000"
+    },
+    {
+      "key": "productId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup",
+      "item": [
+        {
+          "name": "Reset Demo Data",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/reset-data/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "reset-data",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reset Demo Data With Seed Orders",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/reset-data/?seed_orders=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "reset-data",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "seed_orders",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R1 - Race Condition",
+      "item": [
+        {
+          "name": "Before - Race Stock",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/race-stock/?mode=before&users=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "race-stock",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                },
+                {
+                  "key": "users",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Race Stock",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/race-stock/?mode=after&users=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "race-stock",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                },
+                {
+                  "key": "users",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R2 - Transaction Integrity",
+      "item": [
+        {
+          "name": "Before - Transaction Integrity",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/transaction-integrity/?mode=before",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "transaction-integrity",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Transaction Integrity",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/transaction-integrity/?mode=after",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "transaction-integrity",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R3 - Async Jobs",
+      "item": [
+        {
+          "name": "Before - Checkout Blocking Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Demo User\",\n  \"items\": [\n    {\n      \"product_id\": {{productId}},\n      \"quantity\": 1\n    }\n  ],\n  \"simulate_payment_failure\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/checkout/?mode=before",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "checkout",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Checkout Creates Background Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_name\": \"Demo User\",\n  \"items\": [\n    {\n      \"product_id\": {{productId}},\n      \"quantity\": 1\n    }\n  ],\n  \"simulate_payment_failure\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/checkout/?mode=after",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "checkout",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R4 - Batch Processing",
+      "item": [
+        {
+          "name": "Before - Daily Sales Process",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/daily-sales/process/?mode=before",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "daily-sales",
+                "process",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Daily Sales Process",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/daily-sales/process/?mode=after",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "daily-sales",
+                "process",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R5 - Load Balancing",
+      "item": [
+        {
+          "name": "Before - Direct Node Request",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseNodeUrl}}/api/products/popular/?mode=after",
+              "host": [
+                "{{baseNodeUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "popular",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Through Load Balancer",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{loadBalancerUrl}}/api/products/popular/?mode=after",
+              "host": [
+                "{{loadBalancerUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "popular",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R6 - Caching",
+      "item": [
+        {
+          "name": "Before - Popular Products Without Cache",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/popular/?mode=before",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "popular",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Popular Products With Cache",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products/popular/?mode=after",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "popular",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R7 - Control Concurrency",
+      "item": [
+        {
+          "name": "Before - Race Stock Unsafe Concurrency",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/race-stock/?mode=before&users=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "race-stock",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                },
+                {
+                  "key": "users",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Pessimistic Lock Batch",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/pessimistic-lock/batch/?requests=5&hold_seconds=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "pessimistic-lock",
+                "batch",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "requests",
+                  "value": "5"
+                },
+                {
+                  "key": "hold_seconds",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Support APIs",
+      "item": [
+        {
+          "name": "Jobs - Process Pending",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/process-pending/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "process-pending",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Jobs - List",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Monitoring - Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/monitoring/summary/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitoring",
+                "summary",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Monitoring - Performance Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/monitoring/performance-logs/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitoring",
+                "performance-logs",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Monitoring - Trace Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/monitoring/traces/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "monitoring",
+                "traces",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Comparison - Latest",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/comparison/latest/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "comparison",
+                "latest",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -29,6 +29,16 @@ class PerformanceMonitoringMiddleware:
         response["X-Demo-Mode"] = mode
         response["X-DB-Query-Count"] = str(db_query_count)
 
+        logger.info(
+            'request "%s %s" status=%s duration_ms=%.2f db_queries=%s mode=%s request_id=%s',
+            request.method,
+            request.get_full_path(),
+            response.status_code,
+            duration_ms,
+            db_query_count,
+            mode,
+            request.request_id,
+        )
         self._save_log(request, response.status_code, duration_ms, db_query_count, mode)
         return response
 

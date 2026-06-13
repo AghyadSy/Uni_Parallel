@@ -2,11 +2,12 @@ import statistics
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from decimal import Decimal
-from threading import Barrier
+from threading import Barrier, BrokenBarrierError, Lock
+from uuid import uuid4
 
 from django.conf import settings
 from django.core.cache import cache
-from django.db import OperationalError, close_old_connections, connection
+from django.db import OperationalError, close_old_connections, connection, transaction
 from django.db.models import F
 from django.utils import timezone
 
@@ -242,6 +243,120 @@ def latest_comparison():
     }
 
 
+def pessimistic_lock_demo(request_label=None, hold_seconds=5, event_logger=None):
+    product = get_race_product()
+    request_label = (request_label or f"request-{uuid4().hex[:8]}").strip()
+    hold_seconds = _bounded_hold_seconds(hold_seconds)
+    timeline = []
+    started_at = time.perf_counter()
+
+    def _record(message):
+        timeline.append(message)
+        if event_logger is not None:
+            event_logger(message)
+
+    _record(f"{request_label} -> request received")
+    _record(f"{request_label} -> waiting for lock")
+
+    for attempt in range(50):
+        try:
+            with transaction.atomic():
+                Product.objects.select_for_update().get(id=product.id)
+
+                # SQLite ignores select_for_update(), so a write is used here to hold a
+                # database lock during the demo request. PostgreSQL/MySQL rely on the
+                # row lock acquired above.
+                if connection.vendor == "sqlite":
+                    Product.objects.filter(id=product.id).update(version=F("version"))
+
+                waited_ms = round((time.perf_counter() - started_at) * 1000, 2)
+                _record(f"{request_label} -> lock acquired")
+                _record(f"{request_label} -> holding lock for {hold_seconds:.2f}s")
+                time.sleep(hold_seconds)
+                _record(f"{request_label} -> finished")
+                break
+        except OperationalError as exc:
+            if "locked" not in str(exc).lower() or attempt == 49:
+                raise
+            close_old_connections()
+            time.sleep(0.02 * (attempt + 1))
+
+    return {
+        "scenario": "pessimistic_lock_demo",
+        "request_label": request_label,
+        "product_id": product.id,
+        "db_backend": connection.vendor,
+        "lock_acquired": True,
+        "waited_for_lock_ms": waited_ms,
+        "hold_seconds": hold_seconds,
+        "timeline": timeline,
+    }
+
+
+def pessimistic_lock_batch(total_requests=10, hold_seconds=5):
+    total_requests = _bounded_users(total_requests, minimum=1, maximum=20)
+    hold_seconds = _bounded_hold_seconds(hold_seconds)
+    product = get_race_product()
+    batch_started_at = time.perf_counter()
+    event_lock = Lock()
+    start_barrier = Barrier(total_requests)
+    ordered_events = []
+
+    def log_event(message):
+        with event_lock:
+            ordered_events.append(
+                {
+                    "at_ms": round((time.perf_counter() - batch_started_at) * 1000, 2),
+                    "message": message,
+                }
+            )
+
+    def worker(index):
+        label = f"Request {index}"
+        try:
+            start_barrier.wait(timeout=10)
+        except BrokenBarrierError:
+            pass
+        return pessimistic_lock_demo(
+            request_label=label,
+            hold_seconds=hold_seconds,
+            event_logger=log_event,
+        )
+
+    results = []
+    with ThreadPoolExecutor(max_workers=total_requests) as executor:
+        future_map = {
+            executor.submit(_thread_wrapper, lambda index=index: worker(index)): index
+            for index in range(1, total_requests + 1)
+        }
+        for future in as_completed(future_map):
+            result = future.result()
+            result["request_number"] = future_map[future]
+            results.append(result)
+
+    results.sort(key=lambda item: item["request_number"])
+    successful = sum(1 for item in results if item["success"])
+    wait_times = [
+        item["data"]["waited_for_lock_ms"]
+        for item in results
+        if item["success"] and "data" in item and "waited_for_lock_ms" in item["data"]
+    ]
+
+    return {
+        "scenario": "pessimistic_lock_batch",
+        "product_id": product.id,
+        "db_backend": connection.vendor,
+        "total_requests": total_requests,
+        "successful_requests": successful,
+        "failed_requests": total_requests - successful,
+        "hold_seconds": hold_seconds,
+        "avg_wait_ms": round(statistics.mean(wait_times), 2) if wait_times else 0,
+        "max_wait_ms": round(max(wait_times), 2) if wait_times else 0,
+        "ordered_events": ordered_events,
+        "requests": results,
+    }
+
+
 def _race_before_worker(product_id, barrier):
     product = Product.objects.get(id=product_id)
     if product.stock < 1:
@@ -332,6 +447,14 @@ def _bounded_users(users, minimum=1, maximum=200):
     except (TypeError, ValueError):
         users = minimum
     return max(minimum, min(maximum, users))
+
+
+def _bounded_hold_seconds(value, minimum=0, maximum=10):
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        seconds = 5.0
+    return max(minimum, min(maximum, seconds))
 
 
 def _reset_sqlite_sequences():

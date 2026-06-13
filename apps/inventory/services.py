@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import F
 
 from apps.products.models import Product
@@ -13,11 +14,14 @@ def unsafe_decrease_stock(product_id, quantity):
 
 
 def safe_decrease_stock(product_id, quantity):
-    # Synchronization point: one conditional SQL update prevents overselling even
-    # when many threads try to reserve the final unit at the same time.
-    updated = Product.objects.filter(id=product_id, stock__gte=quantity).update(
-        stock=F("stock") - quantity,
-        version=F("version") + 1,
-    )
-    if updated != 1:
-        raise InsufficientStock("Not enough stock.")
+    # Lock the product row so concurrent transactions across instances serialize
+    # stock changes through the database before decrementing inventory.
+    with transaction.atomic():
+        product = Product.objects.select_for_update().get(id=product_id)
+        if product.stock < quantity:
+            raise InsufficientStock("Not enough stock.")
+
+        Product.objects.filter(id=product_id).update(
+            stock=F("stock") - quantity,
+            version=F("version") + 1,
+        )

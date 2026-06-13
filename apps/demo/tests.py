@@ -41,6 +41,31 @@ class DemoScenarioTests(TransactionTestCase):
         self.assertEqual(data["failed_orders"], 15)
         self.assertEqual(data["final_stock"], 0)
 
+    def test_pessimistic_lock_demo_returns_timeline(self):
+        response = self.client.post("/api/demo/pessimistic-lock/?request_label=Request%201&hold_seconds=0.01", data={})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()["data"]
+
+        self.assertEqual(data["scenario"], "pessimistic_lock_demo")
+        self.assertEqual(data["request_label"], "Request 1")
+        self.assertTrue(data["lock_acquired"])
+        self.assertGreaterEqual(data["waited_for_lock_ms"], 0)
+        self.assertIn("Request 1 -> waiting for lock", data["timeline"])
+        self.assertIn("Request 1 -> lock acquired", data["timeline"])
+        self.assertIn("Request 1 -> finished", data["timeline"])
+
+    def test_pessimistic_lock_batch_returns_ordered_events(self):
+        response = self.client.post("/api/demo/pessimistic-lock/batch/?requests=3&hold_seconds=0.01", data={})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()["data"]
+
+        self.assertEqual(data["scenario"], "pessimistic_lock_batch")
+        self.assertEqual(data["total_requests"], 3)
+        self.assertEqual(len(data["requests"]), 3)
+        self.assertGreaterEqual(len(data["ordered_events"]), 3)
+        self.assertTrue(any("lock acquired" in event["message"] for event in data["ordered_events"]))
+        self.assertTrue(any(item["request_number"] == 1 for item in data["requests"]))
+
     def test_transaction_before_leaves_inconsistent_data(self):
         response = self.client.post("/api/demo/transaction-integrity/?mode=before", data={})
         self.assertEqual(response.status_code, 200)
