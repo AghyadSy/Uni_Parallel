@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from apps.demo import services
 from core.aop.tracing import trace_operation
@@ -24,7 +25,8 @@ class TransactionIntegrityAPIView(APIView):
     @trace_operation("transaction_integrity")
     def post(self, request):
         data = services.transaction_integrity_scenario(request.demo_mode)
-        return api_success("Transaction integrity scenario completed.", data, request=request)
+        response_status = 402 if request.demo_mode == "after" else 200
+        return api_success("Transaction integrity scenario completed.", data, request=request, status=response_status)
 
 
 class StressCheckoutAPIView(APIView):
@@ -33,6 +35,14 @@ class StressCheckoutAPIView(APIView):
         users = request.GET.get("users", 100)
         data = services.stress_checkout_scenario(request.demo_mode, users=users)
         return api_success("Stress checkout scenario completed.", data, request=request)
+
+
+class R9StressTestAPIView(APIView):
+    @trace_operation("r9_stress_test")
+    def post(self, request):
+        users = request.GET.get("users", 100)
+        data = services.r9_concurrent_checkout_report(users=users)
+        return api_success("R9 stress test completed.", data, request=request)
 
 
 class PessimisticLockDemoAPIView(APIView):
@@ -57,3 +67,15 @@ class LatestComparisonAPIView(APIView):
     def get(self, request):
         data = services.latest_comparison()
         return api_success("Latest comparison loaded.", data, request=request)
+
+
+class PopularProductsBenchmarkAPIView(APIView):
+    @trace_operation("popular_products_benchmark")
+    def get(self, request):
+        benchmark = services.popular_products_benchmark(request.demo_mode)
+        return Response(
+            {
+                "success": True,
+                "benchmark": benchmark,
+            }
+        )

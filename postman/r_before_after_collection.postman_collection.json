@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "7fdad4d3-3392-4de8-8d84-8c61c4e71431",
     "name": "R Requirements Before After",
-    "description": "طلبات Before/After منظمة حسب R1-R7 لاختبار السيناريوهات الرئيسية في المشروع.",
+    "description": "طلبات Before/After منظمة حسب R1-R8 لاختبار السيناريوهات الرئيسية في المشروع.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -133,7 +133,7 @@
       ]
     },
     {
-      "name": "R2 - Transaction Integrity",
+      "name": "R8 - Transaction Integrity",
       "item": [
         {
           "name": "Before - Transaction Integrity",
@@ -474,6 +474,59 @@
                 {
                   "key": "hold_seconds",
                   "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "R10 - Benchmark API",
+      "item": [
+        {
+          "name": "Before - Popular Products Benchmark",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/r10-benchmark/?mode=before",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "r10-benchmark",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "before"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "After - Popular Products Benchmark",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/demo/r10-benchmark/?mode=after",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "demo",
+                "r10-benchmark",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "after"
                 }
               ]
             }

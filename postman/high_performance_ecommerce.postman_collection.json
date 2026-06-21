@@ -173,6 +173,20 @@
             "method": "GET",
             "url": "{{baseUrl}}/api/demo/comparison/latest/"
           }
+        },
+        {
+          "name": "R10 Benchmark - Before",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/demo/r10-benchmark/?mode=before"
+          }
+        },
+        {
+          "name": "R10 Benchmark - After",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/demo/r10-benchmark/?mode=after"
+          }
         }
       ]
     },

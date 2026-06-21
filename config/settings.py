@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from urllib.parse import parse_qs, unquote, urlparse
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,14 +60,51 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        "OPTIONS": {
-            "timeout": 30,
-        },
+
+def _database_config():
+    database_url = os.environ.get("DATABASE_URL", "").strip()
+    if database_url:
+        parsed = urlparse(database_url)
+        if parsed.scheme not in {"postgres", "postgresql"}:
+            raise ValueError("DATABASE_URL must use postgres:// or postgresql://")
+
+        options = {}
+        ssl_mode = parse_qs(parsed.query).get("sslmode", [os.environ.get("POSTGRES_SSLMODE", "").strip()])[0]
+        if ssl_mode:
+            options["sslmode"] = ssl_mode
+
+        return {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(parsed.path.lstrip("/")) or os.environ.get("POSTGRES_DB", "backend"),
+            "USER": unquote(parsed.username or os.environ.get("POSTGRES_USER", "postgres")),
+            "PASSWORD": unquote(parsed.password or os.environ.get("POSTGRES_PASSWORD", "postgres")),
+            "HOST": parsed.hostname or os.environ.get("POSTGRES_HOST", "127.0.0.1"),
+            "PORT": str(parsed.port or os.environ.get("POSTGRES_PORT", "5432")),
+            "CONN_MAX_AGE": int(os.environ.get("POSTGRES_CONN_MAX_AGE", "60")),
+            "CONN_HEALTH_CHECKS": True,
+            "OPTIONS": options,
+        }
+
+    options = {}
+    ssl_mode = os.environ.get("POSTGRES_SSLMODE", "").strip()
+    if ssl_mode:
+        options["sslmode"] = ssl_mode
+
+    return {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB", "backend"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "aghyad"),
+        "HOST": os.environ.get("POSTGRES_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "CONN_MAX_AGE": int(os.environ.get("POSTGRES_CONN_MAX_AGE", "60")),
+        "CONN_HEALTH_CHECKS": True,
+        "OPTIONS": options,
     }
+
+
+DATABASES = {
+    "default": _database_config(),
 }
 
 LANGUAGE_CODE = "en-us"
@@ -104,7 +142,7 @@ REST_FRAMEWORK = {
 ALLOW_UNSAFE_DEMO_MODE = os.environ.get("ALLOW_UNSAFE_DEMO_MODE", "True").lower() == "true"
 DEMO_INVOICE_DELAY_SECONDS = float(os.environ.get("DEMO_INVOICE_DELAY_SECONDS", "0.8"))
 DEMO_BACKGROUND_JOB_DELAY_SECONDS = float(os.environ.get("DEMO_BACKGROUND_JOB_DELAY_SECONDS", "0.1"))
-DEMO_RACE_INITIAL_STOCK = int(os.environ.get("DEMO_RACE_INITIAL_STOCK", "5"))
+DEMO_RACE_INITIAL_STOCK = int(os.environ.get("DEMO_RACE_INITIAL_STOCK", "500"))
 
 LOGGING = {
     "version": 1,

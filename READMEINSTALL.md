@@ -7,6 +7,24 @@ py -m venv .venv
 pip install -r requirements.txt
 ```
 
+## PostgreSQL
+
+Set PostgreSQL connection variables before running migrations:
+
+```powershell
+$env:POSTGRES_DB = "backend"
+$env:POSTGRES_USER = "postgres"
+$env:POSTGRES_PASSWORD = "postgres"
+$env:POSTGRES_HOST = "127.0.0.1"
+$env:POSTGRES_PORT = "5432"
+```
+
+Or use a single `DATABASE_URL`:
+
+```powershell
+$env:DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:5432/backend"
+```
+
 ## Migrate
 
 ```powershell

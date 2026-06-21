@@ -19,7 +19,9 @@ from apps.orders.services import checkout_after, checkout_before
 from apps.payments import services as payment_services
 from apps.payments.models import Payment
 from apps.products.models import Product
+from apps.products import services as product_services
 from apps.reports.models import DailySalesSummary
+from core.benchmarking import BenchmarkService
 from core.exceptions import InsufficientStock, PaymentFailed
 
 
@@ -179,6 +181,8 @@ def transaction_integrity_scenario(mode):
             "mode": "before",
             "payment": "failed",
             "order_created": Order.objects.count() > before_orders,
+            "initial_stock": before_stock,
+            "final_stock": product.stock,
             "stock_decreased": product.stock < before_stock,
             "data_integrity": "broken",
             "problem_detected": True,
@@ -194,6 +198,8 @@ def transaction_integrity_scenario(mode):
         "mode": "after",
         "payment": "failed",
         "order_created": Order.objects.count() > before_orders,
+        "initial_stock": before_stock,
+        "final_stock": product.stock,
         "stock_decreased": product.stock < before_stock,
         "data_integrity": "preserved",
         "problem_detected": False,
@@ -236,11 +242,89 @@ def stress_checkout_scenario(mode, users=100):
     }
 
 
+def r9_concurrent_checkout_report(users=100):
+    users = _bounded_users(users, maximum=500)
+    product = reset_race_state(stock=users)
+    payload = _single_item_payload(product.id)
+    start = time.perf_counter()
+    results = _run_concurrently(users, users, lambda: checkout_after.checkout(payload))
+    wall_time_s = time.perf_counter() - start
+    durations = [result["duration_ms"] for result in results]
+    successful = sum(1 for result in results if result["success"])
+    failed = users - successful
+
+    product.refresh_from_db()
+    paid_orders = Order.objects.filter(status=Order.STATUS_PAID).count()
+    failed_orders = Order.objects.filter(status=Order.STATUS_FAILED).count()
+    pending_orders = Order.objects.filter(status=Order.STATUS_PENDING).count()
+    order_items = OrderItem.objects.count()
+    success_payments = Payment.objects.filter(status=Payment.STATUS_SUCCESS).count()
+    failed_payments = Payment.objects.filter(status=Payment.STATUS_FAILED).count()
+    distinct_order_ids = Order.objects.values("id").distinct().count()
+    distinct_payment_ids = Payment.objects.values("id").distinct().count()
+    requests_per_second = round(users / wall_time_s, 2) if wall_time_s > 0 else 0
+
+    return {
+        "scenario": "r9_concurrent_checkout",
+        "tested_api": "POST /api/orders/checkout/?mode=after",
+        "total_requests": users,
+        "successful_requests": successful,
+        "failed_requests": failed,
+        "average_response_time_ms": round(statistics.mean(durations), 2) if durations else 0,
+        "min_response_time_ms": round(min(durations), 2) if durations else 0,
+        "max_response_time_ms": round(max(durations), 2) if durations else 0,
+        "requests_per_second_rps": requests_per_second,
+        "system_crash": False,
+        "total_wall_time_ms": round(wall_time_s * 1000, 2),
+        "initial_stock": users,
+        "final_stock": product.stock,
+        "paid_orders": paid_orders,
+        "failed_orders": failed_orders,
+        "pending_orders": pending_orders,
+        "order_items": order_items,
+        "success_payments": success_payments,
+        "failed_payments": failed_payments,
+        "distinct_order_ids": distinct_order_ids,
+        "distinct_payment_ids": distinct_payment_ids,
+        "data_integrity": {
+            "no_lost_orders": paid_orders == successful,
+            "no_duplicate_order_rows": distinct_order_ids == paid_orders,
+            "no_lost_payments": success_payments == successful,
+            "no_duplicate_payment_rows": distinct_payment_ids == success_payments,
+            "stock_consistent": product.stock == users - successful,
+            "no_failed_or_pending_records": failed_orders == 0 and pending_orders == 0 and failed_payments == 0,
+            "order_items_match_orders": order_items == successful,
+        },
+    }
+
+
 def latest_comparison():
     return {
         "before": cache.get(f"{LATEST_COMPARISON_CACHE_PREFIX}before"),
         "after": cache.get(f"{LATEST_COMPARISON_CACHE_PREFIX}after"),
     }
+
+
+def popular_products_benchmark(mode):
+    normalized_mode = "before" if mode == "before" else "after"
+    benchmark_service = BenchmarkService(total_runs=20)
+    operation = (
+        product_services.get_popular_products_before
+        if normalized_mode == "before"
+        else product_services.get_popular_products_after
+    )
+
+    return benchmark_service.run(
+        scenario="popular_products_benchmark",
+        operation=operation,
+        timestamp=timezone.now().replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        query_count_getter=lambda result: result.get("db_query_count", 0),
+        before_all=lambda: cache.delete(product_services.POPULAR_PRODUCTS_CACHE_KEY),
+        extra={
+            "mode": normalized_mode,
+            "target_endpoint": f"/api/products/popular/?mode={normalized_mode}",
+        },
+    )
 
 
 def pessimistic_lock_demo(request_label=None, hold_seconds=5, event_logger=None):

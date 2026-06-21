@@ -1,0 +1,411 @@
+{
+  "generated_at": "2026-06-21 04:49:16",
+  "before": {
+    "scenario": "before",
+    "url": "http://127.0.0.1:8000/api/products/popular/?mode=before",
+    "requests": 20,
+    "samples": [
+      {
+        "request_number": 1,
+        "http_elapsed_ms": 219.45,
+        "app_duration_ms": 112.64,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 2,
+        "http_elapsed_ms": 207.78,
+        "app_duration_ms": 120.57,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 3,
+        "http_elapsed_ms": 188.25,
+        "app_duration_ms": 113.57,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 4,
+        "http_elapsed_ms": 188.8,
+        "app_duration_ms": 127.55,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 5,
+        "http_elapsed_ms": 184.95,
+        "app_duration_ms": 109.65,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 6,
+        "http_elapsed_ms": 174.88,
+        "app_duration_ms": 119.36,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 7,
+        "http_elapsed_ms": 182.82,
+        "app_duration_ms": 113.64,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 8,
+        "http_elapsed_ms": 178.23,
+        "app_duration_ms": 112.63,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 9,
+        "http_elapsed_ms": 214.11,
+        "app_duration_ms": 121.26,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 10,
+        "http_elapsed_ms": 191.16,
+        "app_duration_ms": 113.36,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 11,
+        "http_elapsed_ms": 169.74,
+        "app_duration_ms": 113.4,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 12,
+        "http_elapsed_ms": 205.78,
+        "app_duration_ms": 113.2,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 13,
+        "http_elapsed_ms": 163.97,
+        "app_duration_ms": 112.57,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 14,
+        "http_elapsed_ms": 181.79,
+        "app_duration_ms": 122.33,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 15,
+        "http_elapsed_ms": 174.55,
+        "app_duration_ms": 123.78,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 16,
+        "http_elapsed_ms": 194.58,
+        "app_duration_ms": 116.42,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 17,
+        "http_elapsed_ms": 195.62,
+        "app_duration_ms": 110.68,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 18,
+        "http_elapsed_ms": 212.72,
+        "app_duration_ms": 119.85,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 19,
+        "http_elapsed_ms": 226.79,
+        "app_duration_ms": 123.84,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      },
+      {
+        "request_number": 20,
+        "http_elapsed_ms": 224.13,
+        "app_duration_ms": 126.67,
+        "db_query_count": 19,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "repeated_db_queries"
+      }
+    ],
+    "summary": {
+      "http_avg_ms": 194.0,
+      "http_min_ms": 163.97,
+      "http_max_ms": 226.79,
+      "http_median_ms": 189.98,
+      "http_p95_ms": 224.26,
+      "app_avg_ms": 117.35,
+      "app_p95_ms": 126.71,
+      "db_queries_avg": 19,
+      "db_queries_min": 19,
+      "db_queries_max": 19,
+      "cache_hits": 0,
+      "cache_misses": 20
+    }
+  },
+  "after": {
+    "scenario": "after",
+    "url": "http://127.0.0.1:8000/api/products/popular/?mode=after",
+    "requests": 20,
+    "samples": [
+      {
+        "request_number": 1,
+        "http_elapsed_ms": 98.09,
+        "app_duration_ms": 2.52,
+        "db_query_count": 1,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 2,
+        "http_elapsed_ms": 94.23,
+        "app_duration_ms": 3.0,
+        "db_query_count": 1,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 3,
+        "http_elapsed_ms": 59.71,
+        "app_duration_ms": 3.06,
+        "db_query_count": 1,
+        "cache_hit": false,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 4,
+        "http_elapsed_ms": 81.1,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 5,
+        "http_elapsed_ms": 90.51,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 6,
+        "http_elapsed_ms": 96.64,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 7,
+        "http_elapsed_ms": 102.88,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 8,
+        "http_elapsed_ms": 104.95,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 9,
+        "http_elapsed_ms": 97.92,
+        "app_duration_ms": 0.1,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 10,
+        "http_elapsed_ms": 105.45,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 11,
+        "http_elapsed_ms": 75.71,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 12,
+        "http_elapsed_ms": 93.21,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 13,
+        "http_elapsed_ms": 97.16,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 14,
+        "http_elapsed_ms": 81.82,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 15,
+        "http_elapsed_ms": 49.58,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 16,
+        "http_elapsed_ms": 68.41,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 17,
+        "http_elapsed_ms": 56.05,
+        "app_duration_ms": 0.07,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 18,
+        "http_elapsed_ms": 103.79,
+        "app_duration_ms": 0.13,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 19,
+        "http_elapsed_ms": 88.98,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      },
+      {
+        "request_number": 20,
+        "http_elapsed_ms": 79.78,
+        "app_duration_ms": 0.08,
+        "db_query_count": 0,
+        "cache_hit": true,
+        "product_count": 9,
+        "strategy": "django_cache_60_seconds"
+      }
+    ],
+    "summary": {
+      "http_avg_ms": 86.3,
+      "http_min_ms": 49.58,
+      "http_max_ms": 105.45,
+      "http_median_ms": 91.86,
+      "http_p95_ms": 104.98,
+      "app_avg_ms": 0.5,
+      "app_p95_ms": 3.0,
+      "db_queries_avg": 0.15,
+      "db_queries_min": 0,
+      "db_queries_max": 1,
+      "cache_hits": 17,
+      "cache_misses": 3
+    }
+  },
+  "comparison": {
+    "avg_improvement_ms": 107.7,
+    "avg_speedup_x": 2.25,
+    "p95_improvement_ms": 119.28,
+    "db_query_reduction_avg": 18.85
+  }
+}

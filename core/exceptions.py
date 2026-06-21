@@ -15,6 +15,7 @@ class InsufficientStock(DemoError):
 
 class PaymentFailed(DemoError):
     code = "PAYMENT_FAILED"
+    status_code = status.HTTP_402_PAYMENT_REQUIRED
 
 
 def custom_exception_handler(exc, context):
